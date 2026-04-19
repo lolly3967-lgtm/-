@@ -429,3 +429,28 @@ html, body {
         white-space: nowrap;
     }
 }
+/* إصلاح مشاكل الجوال */
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.side-panel {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+.sidebar {
+    height: auto;
+}
+
+html, body {
+    overflow-x: hidden;
+}
+
+/* تحسين flex */
+.map-layout {
+    flex-wrap: wrap;
+}
