@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المطعم | لا تهدرها</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        :root {
+            --orange: #ff7a00;
+            --green: #2e7d32;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Tajawal', sans-serif;
+            display: flex;
+            background: #f5f5f5;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #1e1e1e;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* لتوسط الشعار */
+        }
+
+        /* تعديل حجم الشعار هنا */
+        .logo-container {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .sidebar-logo {
+            width: 100px; /* حجم الشعار الصغير */
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%; /* شكل دائري أنيق */
+            border: 2px solid var(--orange);
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+        }
+
+        .sidebar li {
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            transition: 0.3s;
+        }
+
+        .sidebar li:hover {
+            background: #333;
+        }
+
+        .active {
+            background: var(--orange) !important;
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .hidden { display: none; }
+
+        .add-food-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .grid-form {
+            display: grid;
+            gap: 15px;
+        }
+
+        input, select {
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-family: 'Tajawal';
+        }
+
+        .btn-primary {
+            background: var(--orange);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .section-title {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .notif-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-right: 5px solid #ffc107;
+        }
+
+        .comp-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .competitors-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="شعار لا تهدرها.jpg" class="sidebar-logo" alt="شعار لا تهدرها">
+            <p style="font-size: 12px; margin-top: 10px; color: #aaa;">لوحة تحكم الشركاء</p>
+        </div>
+
+        <ul>
+            <li id="btn-add" class="active" onclick="showSection('add')">📦 إضافة فائض</li>
+            <li id="btn-track" onclick="showSection('track')">🚚 تتبع المندوب</li>
+            <li id="btn-fin" onclick="showSection('fin')">💰 الاستدامة</li>
+            <hr style="border: 0.5px solid #333; width: 100%; margin: 15px 0;">
+            <li onclick="location.href='index.html'">🏠 الرئيسية</li>
+        </ul>
+    </div>
+
+    <main class="content">
+
+        <div id="add">
+            <div class="add-food-card">
+                <h3 class="section-title">نشر فائض طعام جديد</h3>
+                <form onsubmit="publishFood(); return false;" class="grid-form">
+                    <input id="name" placeholder="اسم الوجبة (مثلاً: وجبة شاورما عائلية)" required>
+                    <select id="type">
+                        <option>وجبات مطبوخة</option>
+                        <option>مخبوزات</option>
+                        <option>سلطات</option>
+                        <option>حلويات</option>
+                    </select>
+                    <input id="price" type="number" placeholder="السعر بعد الخصم (ريال)">
+                    <button class="btn-primary">نشر العرض الآن</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="track" class="hidden">
+            <h2 class="section-title">تتبع المندوب</h2>
+            <div class="notif-box">🚚 المندوب "أحمد" في الطريق لاستلام الوجبات</div>
+            <div id="map" style="height:450px; border-radius: 15px; border: 2px solid #ddd;"></div>
+        </div>
+
+        <div id="fin" class="hidden">
+            <h2 class="section-title">إحصائيات التأثير والاستدامة</h2>
+            <div class="competitors-grid">
+                <div class="comp-card">
+                    <h3 style="color: var(--green);">عدد الوجبات المنقذة</h3>
+                    <p id="meals" style="font-size: 30px; font-weight: bold;">0</p>
+                </div>
+                <div class="comp-card">
+                    <h3 style="color: var(--orange);">إجمالي المبيعات</h3>
+                    <p id="money" style="font-size: 30px; font-weight: bold;">0 ريال</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        function showSection(sec) {
+            // إخفاء الكل
+            document.getElementById('add').classList.add('hidden');
+            document.getElementById('track').classList.add('hidden');
+            document.getElementById('fin').classList.add('hidden');
+
+            // إزالة النشاط من القائمة
+            document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
+
+            // إظهار القسم المطلوب
+            document.getElementById(sec).classList.remove('hidden');
+            document.getElementById('btn-' + sec).classList.add('active');
+
+            if (sec === 'track') {
+                setTimeout(() => map.invalidateSize(), 200);
+            }
+            updateStats();
+        }
+
+        function publishFood() {
+            let name = document.getElementById('name').value;
+            let price = document.getElementById('price').value || 0;
+
+            let data = JSON.parse(localStorage.getItem('food')) || [];
+            data.push({ name, price });
+
+            localStorage.setItem('food', JSON.stringify(data));
+
+            alert("تم نشر العرض بنجاح! سيظهر الآن للمستخدمين في جدة ✅");
+            document.querySelector('form').reset();
+            updateStats();
+        }
+
+        function updateStats() {
+            let data = JSON.parse(localStorage.getItem('food')) || [];
+            document.getElementById('meals').innerText = data.length;
+
+            let total = data.reduce((s, i) => s + Number(i.price || 0), 0);
+            document.getElementById('money').innerText = total + " ريال";
+        }
+
+        // إعداد الخريطة
+        var map = L.map('map').setView([21.5433, 39.1728], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        L.marker([21.54, 39.17]).addTo(map).bindPopup("المندوب هنا").openPopup();
+
+        updateStats();
+    </script>
+
+</body>
+</html>

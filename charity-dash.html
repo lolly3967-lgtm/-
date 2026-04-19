@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الجمعيات | لا تهدرها</title>
+
+    <!-- خريطة -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- خط -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --green: #2e7d32;
+            --orange: #ff7a00;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .map-layout {
+            display: flex;
+        }
+
+        .side-panel {
+            width: 320px;
+            background: #1e1e1e;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .title {
+            margin-bottom: 15px;
+        }
+
+        .btn-back-small {
+            display: inline-block;
+            margin-bottom: 15px;
+            background: var(--orange);
+            padding: 8px 12px;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .notif-box {
+            background: #fff3cd;
+            color: black;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .offer-card {
+            background: white;
+            color: black;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .offer-card:hover {
+            transform: scale(1.02);
+        }
+
+        .badge {
+            background: var(--green);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .btn-action {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background: var(--green);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        #map-char {
+            flex: 1;
+            height: 100vh;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="map-layout">
+
+    <!-- القائمة -->
+    <div class="side-panel">
+
+        <h2 class="title">🏢 بوابة الجمعيات</h2>
+
+        <a href="login.html" class="btn-back-small">⬅️ خروج</a>
+
+        <div class="notif-box">
+            🔔 تبرع جديد: 20 وجبة من "شاورما جحا"
+        </div>
+
+        <!-- عرض 1 -->
+        <div class="offer-card" onclick="focusMap(21.5892, 39.1511)">
+            <span class="badge">مجاني بالكامل</span>
+            <h4>مطعم حي السلامة</h4>
+            <p>20 وجبة جاهزة للاستلام</p>
+            <button class="btn-action" onclick="confirmPickup(event)">تأكيد الاستلام</button>
+        </div>
+
+        <!-- عرض 2 -->
+        <div class="offer-card" onclick="focusMap(21.55, 39.18)">
+            <span class="badge">تبرع</span>
+            <h4>مطعم البيك</h4>
+            <p>15 وجبة</p>
+            <button class="btn-action" onclick="confirmPickup(event)">تأكيد الاستلام</button>
+        </div>
+
+    </div>
+
+    <!-- الخريطة -->
+    <div id="map-char"></div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    var map = L.map('map-char').setView([21.5433, 39.1728], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // نقاط
+    var marker1 = L.marker([21.5892, 39.1511]).addTo(map).bindPopup("مطعم حي السلامة");
+    var marker2 = L.marker([21.55, 39.18]).addTo(map).bindPopup("مطعم البيك");
+
+    function focusMap(lat, lng) {
+        map.setView([lat, lng], 15);
+    }
+
+    function confirmPickup(e) {
+        e.stopPropagation(); // يمنع تضارب الضغط
+        alert("✅ تم تأكيد الاستلام، المندوب في الطريق!");
+    }
+</script>
+
+</body>
+</html>
