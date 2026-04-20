@@ -11,103 +11,97 @@
         :root {
             --orange: #ff7a00;
             --green: #2e7d32;
+            --bg-light: #fdfdfd;
         }
 
         body {
             margin: 0;
             font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(to left, #f8f8f8, #ffffff);
+            background: #f8f9fa;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            align-items: center;
         }
 
         .top-bar {
-            padding: 15px;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .btn-back {
             text-decoration: none;
-            background: var(--orange);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 6px;
+            background: #fff;
+            color: var(--orange);
+            padding: 8px 18px;
+            border-radius: 50px;
             font-size: 14px;
+            font-weight: bold;
             display: inline-block;
             transition: 0.3s;
+            border: 1px solid var(--orange);
         }
 
         .btn-back:hover {
-            opacity: 0.9;
-            transform: translateX(-5px);
+            background: var(--orange);
+            color: white;
         }
 
         .login-container {
             width: 90%;
-            max-width: 420px; /* تحديد عرض مثالي للابتوب */
-            margin: 20px auto; /* تقليل المارجن ليتناسب مع الجوال */
+            max-width: 450px;
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             text-align: center;
-            box-sizing: border-box; /* لضمان عدم خروج الحواف عن العرض المحدد */
+            box-sizing: border-box;
+            margin-bottom: 40px;
         }
 
-        h2 {
-            margin-top: 0;
-            font-size: 24px;
-            color: #333;
-        }
+        h2 { margin-top: 0; font-size: 26px; color: #333; }
+        p { color: #777; margin-bottom: 30px; font-size: 15px; }
 
-        p {
-            color: #666;
-            margin-bottom: 25px;
-            font-size: 15px;
-        }
-
-        .input-box {
-            width: 100%;
-            margin-bottom: 15px;
-        }
+        .input-box { width: 100%; margin-bottom: 15px; }
 
         input {
             width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            box-sizing: border-box; /* مهم جداً للتجاوب */
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1.5px solid #eee;
+            box-sizing: border-box;
             font-family: 'Tajawal', sans-serif;
             outline: none;
             transition: 0.3s;
+            font-size: 15px;
         }
 
         input:focus {
             border-color: var(--orange);
-            box-shadow: 0 0 5px rgba(255, 122, 0, 0.2);
+            background: #fffcf9;
         }
 
         .login-btn {
             width: 100%;
             background: var(--orange);
             color: white;
-            padding: 14px;
+            padding: 15px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: bold;
             font-size: 16px;
-            margin-bottom: 20px;
+            margin: 10px 0 25px;
             transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 122, 0, 0.2);
         }
 
-        .login-btn:hover {
-            background: #e66e00;
-        }
+        .login-btn:hover { background: #e66e00; transform: translateY(-2px); }
 
         .user-selection {
             display: grid;
-            grid-template-columns: 1fr; /* جعل العناصر تحت بعضها */
+            grid-template-columns: 1fr; /* ترتيب عمودي افتراضي */
             gap: 12px;
         }
 
@@ -116,13 +110,14 @@
             align-items: center;
             justify-content: center;
             padding: 12px;
-            background: #f9f9f9;
+            background: #fdfdfd;
             border: 1px solid #eee;
             border-radius: 12px;
             text-decoration: none;
-            color: #444;
+            color: #555;
             transition: 0.3s;
             font-weight: 500;
+            font-size: 14px;
         }
 
         .user-box:hover {
@@ -131,19 +126,14 @@
             color: var(--orange);
         }
 
-        /* --- تعديلات الشاشات الصغيرة (الجوال) --- */
+        /* --- تعديلات التجاوب --- */
         @media (max-width: 480px) {
             .login-container {
-                padding: 20px;
+                padding: 30px 20px;
                 margin-top: 10px;
             }
-            
-            h2 { font-size: 20px; }
-            
-            .user-box {
-                font-size: 14px;
-                padding: 10px;
-            }
+            h2 { font-size: 22px; }
+            .btn-back { padding: 6px 14px; font-size: 13px; }
         }
     </style>
 </head>
@@ -155,7 +145,6 @@
 </div>
 
 <div class="login-container">
-
     <h2>مرحباً بك 👋</h2>
     <p>سجّل دخولك للوصول إلى لوحة التحكم</p>
 
@@ -169,9 +158,9 @@
 
     <button class="login-btn">تسجيل الدخول</button>
 
-    <div style="display: flex; align-items: center; margin: 10px 0 25px;">
+    <div style="display: flex; align-items: center; margin-bottom: 25px;">
         <hr style="flex: 1; border: 0; border-top: 1px solid #eee;">
-        <span style="padding: 0 10px; color: #999; font-size: 12px;">أو اختر نوع الحساب</span>
+        <span style="padding: 0 10px; color: #bbb; font-size: 12px;">أو اختر نوع الحساب</span>
         <hr style="flex: 1; border: 0; border-top: 1px solid #eee;">
     </div>
 
@@ -179,8 +168,7 @@
       <a href="restaurant-dash.html" class="user-box">🏪 مطعم / كافيه</a>
       <a href="charity-dash.html" class="user-box">🤝 جمعية خيرية</a>
       <a href="user-dash.html" class="user-box">👤 مستخدم</a>
-  </div>
-
+    </div>
 </div>
 
 </body>
