@@ -3,153 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>واجهة الأفراد | لا تهدرها</title>
+    <title>منصة لا تهدرها | الرئيسية</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --green: #2d5a3f;
             --orange: #ff7a00;
+            --logo-bg: #fdfdfd;
         }
-
         body {
             margin: 0;
             font-family: 'Tajawal', sans-serif;
-            overflow: hidden; /* لمنع التمرير المزدوج */
-        }
-
-        .map-layout {
-            display: flex;
-            height: 100vh;
-            width: 100vw;
-        }
-
-        /* اللوحة الجانبية - تتحول للوحة سفلية في الجوال */
-        .side-panel {
-            width: 360px;
-            background: white;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
-            transition: 0.3s;
-        }
-
-        .panel-header {
-            padding: 20px;
-            background: #fff;
-            border-bottom: 1px solid #eee;
-        }
-
-        .offers-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            background: #fdfdfd;
-        }
-
-        .btn-back-small {
-            text-decoration: none;
-            background: #eee;
+            background: var(--logo-bg);
             color: #333;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            display: inline-block;
-            margin-bottom: 10px;
+            overflow-x: hidden;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
         }
 
-        .cart-box {
-            background: var(--green);
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-weight: bold;
+        /* Navbar */
+        nav {
+            background: var(--logo-bg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* للسماح بالعناصر بالنزول إذا ضاقت الشاشة */
         }
-
-        .offer-card {
-            background: white;
-            border: 1px solid #eee;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            cursor: pointer;
+        .logo { width: 100px; transition: 0.3s; }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 15px;
             transition: 0.3s;
         }
-
-        .offer-card:hover { border-color: var(--orange); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-
-        .badge {
-            font-size: 10px;
-            padding: 3px 8px;
-            border-radius: 5px;
-            color: white;
-            text-transform: uppercase;
-        }
-        .sale { background: var(--green); }
-        .new-badge { background: var(--orange); }
-
-        .btn-action {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 8px;
-            background: var(--green);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
+        nav a:hover { color: var(--orange); }
+        .btn-login {
+            background: var(--orange);
+            color: #fff !important;
+            padding: 8px 15px;
+            border-radius: 20px;
+            white-space: nowrap;
+            font-size: 14px;
         }
 
-        #map-user {
-            flex: 1;
-            height: 100%;
-            z-index: 1;
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+            background: linear-gradient(rgba(253,253,253,0.8), rgba(253,253,253,0.8)),
+                        url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1470&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            min-height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hero h1 { 
+            font-size: clamp(24px, 8vw, 42px); 
+            color: var(--green); 
+            margin-bottom: 20px; 
+            line-height: 1.3;
+        }
+        .hero p { 
+            font-size: clamp(15px, 4vw, 19px); 
+            color: #555; 
+            margin-bottom: 30px; 
+            max-width: 600px;
+            margin-inline: auto;
         }
 
-        /* زر الجوال للتبديل بين القائمة والخريطة */
-        .mobile-toggle {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2000;
-            background: var(--dark);
+        .btn-primary-orange {
+            background: var(--orange);
             color: white;
-            padding: 10px 20px;
+            padding: 14px 35px;
             border-radius: 30px;
-            border: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            font-family: 'Tajawal';
+            font-size: 18px;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
         }
 
-        /* --- تعديلات الجوال --- */
+        /* About Section */
+        .about {
+            padding: 80px 0;
+            text-align: center;
+        }
+        .about h2 {
+            font-size: 28px;
+            color: var(--green);
+            margin-bottom: 25px;
+        }
+        .about p {
+            max-width: 750px;
+            margin: auto;
+            color: #666;
+            line-height: 1.8;
+            font-size: 17px;
+        }
+
+        /* Footer */
+        footer {
+            background: #1e1e1e;
+            color: white;
+            padding: 50px 0 20px;
+        }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-box h4 { color: var(--orange); margin-bottom: 20px; }
+        .footer-box p, .footer-box a { 
+            font-size: 14px; 
+            opacity: 0.8; 
+            line-height: 2; 
+            display: block; 
+            text-decoration: none; 
+            color: white;
+        }
+        
+        /* --- استعلامات الوسائط (Media Queries) للهواتف --- */
+
         @media (max-width: 768px) {
-            .map-layout { flex-direction: column; }
-
-            .side-panel {
-                width: 100%;
-                height: 50vh; /* تأخذ نصف الشاشة في الجوال */
-                position: fixed;
-                bottom: 0;
-                border-radius: 20px 20px 0 0;
+            .navbar {
+                justify-content: center; /* توسيط الشعار والروابط في الجوال */
+                gap: 20px;
             }
+            .logo { width: 80px; }
+            .hero { padding: 60px 15px; }
+            .about { padding: 50px 0; }
+        }
 
-            #map-user {
-                height: 100vh;
-                width: 100vw;
+        @media (max-width: 480px) {
+            nav ul {
+                gap: 10px;
             }
-
-            .mobile-toggle { display: block; background: #333; }
-            
-            .side-panel.collapsed {
-                transform: translateY(calc(100% - 60px)); /* إخفاء القائمة مع إبقاء الهيدر */
+            nav a {
+                font-size: 13px;
+            }
+            .btn-login {
+                padding: 6px 12px;
+            }
+            .footer-content {
+                text-align: center;
             }
         }
     </style>
@@ -157,82 +178,58 @@
 
 <body>
 
-<button class="mobile-toggle" onclick="togglePanel()">القائمة / الخريطة</button>
+    <nav>
+        <div class="container navbar">
+            <img src="لاتهدرها.jpg.jpeg" class="logo" alt="شعار لا تهدرها">
+            <ul>
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="competitors.html">المنافسون</a></li>
+                <li><a href="login.html" class="btn-login">دخول / تسجيل</a></li>
+            </ul>
+        </div>
+    </nav>
 
-<div class="map-layout">
+    <header class="hero">
+        <div class="container">
+            <h1>كل لقمة لها قيمة</h1>
+            <p>نربط فائض الطعام من مطاعم جدة بالجمعيات والمحتاجين بطريقة ذكية وسريعة</p>
+            <a href="login.html" class="btn-primary-orange">ابدأ الآن مجانًا</a>
+        </div>
+    </header>
 
-    <div class="side-panel" id="sidePanel">
-        <div class="panel-header">
-            <a href="login.html" class="btn-back-small">🏠 خروج</a>
-            <h3 style="margin: 5px 0;">🍽️ العروض المتاحة في جدة</h3>
-            <div class="cart-box">
-                <span>🛒 السلة</span>
-                <span id="cart-count">0</span>
+    <section class="about">
+        <div class="container">
+            <h2>من نحن</h2>
+            <p>
+                منصة "لا تهدرها" هي مبادرة تقنية تهدف إلى تقليل هدر الطعام في مدينة جدة
+                من خلال ربط المطاعم التي لديها فائض مع الجمعيات الخيرية والأفراد، لضمان وصول الطعام لمن يستحقه.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-box">
+                    <h4>عن المنصة</h4>
+                    <p>مشروع ريادي لتحويل فائض الطعام لمورد اجتماعي مستدام في مدينة جدة.</p>
+                </div>
+                <div class="footer-box">
+                    <h4>تواصل معنا</h4>
+                    <p>📧 info@latahderha.com</p>
+                    <p>📍 جدة، المملكة العربية السعودية</p>
+                </div>
+                <div class="footer-box">
+                    <h4>روابط سريعة</h4>
+                    <a href="index.html">الرئيسية</a>
+                    <a href="login.html">تسجيل الدخول</a>
+                </div>
+            </div>
+            <div class="copyright" style="text-align: center; border-top: 1px solid #333; padding-top: 20px; font-size: 12px; opacity: 0.5;">
+                &copy; 2026 منصة لا تهدرها. جميع الحقوق محفوظة.
             </div>
         </div>
-
-        <div class="offers-list">
-            <div class="offer-card" onclick="focusMap(21.4858, 39.1925)">
-                <span class="badge sale">خصم 50%</span>
-                <h4>كافيه حي الشاطئ</h4>
-                <p>15 ريال</p>
-                <button class="btn-action" onclick="order(event, 'كافيه حي الشاطئ')">طلب الآن</button>
-            </div>
-
-            <div id="dynamic-offers-container">
-                </div>
-        </div>
-    </div>
-
-    <div id="map-user"></div>
-
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script>
-    var map = L.map('map-user').setView([21.4858, 39.1925], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-    L.marker([21.4858, 39.1925]).addTo(map).bindPopup("كافيه حي الشاطئ");
-
-    let cart = 0;
-
-    function togglePanel() {
-        document.getElementById('sidePanel').classList.toggle('collapsed');
-    }
-
-    function focusMap(lat, lng) {
-        map.setView([lat, lng], 15);
-        if(window.innerWidth < 768) togglePanel(); // تصغير القائمة لرؤية النقطة على الخريطة
-    }
-
-    function order(e, name) {
-        e.stopPropagation();
-        cart++;
-        document.getElementById("cart-count").innerText = cart;
-        alert("✅ تم الإضافة: " + name);
-    }
-
-    window.onload = function() {
-        let foodData = JSON.parse(localStorage.getItem('food')) || [];
-        let dynamicContainer = document.getElementById('dynamic-offers-container');
-
-        foodData.forEach((item) => {
-            let cardHtml = `
-                <div class="offer-card" style="border-right: 4px solid var(--orange);">
-                    <span class="badge new-badge">جديد</span>
-                    <h4>${item.name}</h4>
-                    <p>${item.price} ريال</p>
-                    <button class="btn-action" style="background:var(--orange);" onclick="order(event, '${item.name}')">
-                        طلب الآن
-                    </button>
-                </div>
-            `;
-            dynamicContainer.innerHTML += cardHtml;
-        });
-    };
-</script>
+    </footer>
 
 </body>
 </html>
