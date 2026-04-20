@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة الجمعيات | لا تهدرها</title>
 
-    <!-- خريطة -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <!-- خط -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
@@ -20,24 +18,28 @@
         body {
             margin: 0;
             font-family: 'Tajawal', sans-serif;
+            overflow: hidden; /* لمنع التمرير المزدوج في الشاشات الكبيرة */
         }
 
         .map-layout {
             display: flex;
+            height: 100vh;
+            flex-direction: row; /* لابتوب: جنباً إلى جنب */
         }
 
+        /* اللوحة الجانبية */
         .side-panel {
             width: 320px;
             background: #1e1e1e;
             color: white;
             padding: 20px;
-            height: 100vh;
+            height: 100%;
             overflow-y: auto;
+            box-sizing: border-box;
+            z-index: 1001;
         }
 
-        .title {
-            margin-bottom: 15px;
-        }
+        .title { margin-top: 0; font-size: 22px; }
 
         .btn-back-small {
             display: inline-block;
@@ -47,6 +49,7 @@
             color: white;
             border-radius: 6px;
             text-decoration: none;
+            font-size: 14px;
         }
 
         .notif-box {
@@ -55,6 +58,8 @@
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 15px;
+            font-size: 14px;
+            border-right: 4px solid var(--orange);
         }
 
         .offer-card {
@@ -67,34 +72,56 @@
             transition: 0.2s;
         }
 
-        .offer-card:hover {
-            transform: scale(1.02);
-        }
+        .offer-card:hover { transform: translateY(-3px); }
 
         .badge {
             background: var(--green);
             color: white;
             padding: 4px 8px;
             border-radius: 5px;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .btn-action {
             margin-top: 10px;
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: none;
             background: var(--green);
             color: white;
             border-radius: 6px;
             cursor: pointer;
+            font-family: 'Tajawal';
+            font-weight: bold;
         }
 
+        /* منطقة الخريطة */
         #map-char {
             flex: 1;
-            height: 100vh;
+            height: 100%;
         }
 
+        /* --- تعديلات التجاوب (الجوال) --- */
+        @media (max-width: 768px) {
+            body { overflow: auto; } /* السماح بالتمرير في الجوال */
+            
+            .map-layout {
+                flex-direction: column; /* جعل الخريطة واللوحة فوق بعضهما */
+                height: auto;
+            }
+
+            #map-char {
+                height: 40vh; /* تحديد ارتفاع الخريطة في الجوال */
+                width: 100%;
+            }
+
+            .side-panel {
+                width: 100%;
+                height: auto;
+                min-height: 60vh;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 
@@ -102,18 +129,14 @@
 
 <div class="map-layout">
 
-    <!-- القائمة -->
     <div class="side-panel">
-
         <h2 class="title">🏢 بوابة الجمعيات</h2>
-
         <a href="login.html" class="btn-back-small">⬅️ خروج</a>
 
         <div class="notif-box">
             🔔 تبرع جديد: 20 وجبة من "شاورما جحا"
         </div>
 
-        <!-- عرض 1 -->
         <div class="offer-card" onclick="focusMap(21.5892, 39.1511)">
             <span class="badge">مجاني بالكامل</span>
             <h4>مطعم حي السلامة</h4>
@@ -121,17 +144,14 @@
             <button class="btn-action" onclick="confirmPickup(event)">تأكيد الاستلام</button>
         </div>
 
-        <!-- عرض 2 -->
         <div class="offer-card" onclick="focusMap(21.55, 39.18)">
             <span class="badge">تبرع</span>
             <h4>مطعم البيك</h4>
             <p>15 وجبة</p>
             <button class="btn-action" onclick="confirmPickup(event)">تأكيد الاستلام</button>
         </div>
-
     </div>
 
-    <!-- الخريطة -->
     <div id="map-char"></div>
 
 </div>
@@ -139,22 +159,34 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
+    // تهيئة الخريطة
     var map = L.map('map-char').setView([21.5433, 39.1728], 12);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
 
-    // نقاط
+    // إضافة النقاط
     var marker1 = L.marker([21.5892, 39.1511]).addTo(map).bindPopup("مطعم حي السلامة");
     var marker2 = L.marker([21.55, 39.18]).addTo(map).bindPopup("مطعم البيك");
 
     function focusMap(lat, lng) {
         map.setView([lat, lng], 15);
+        // في الجوال، نقوم بالتمرير للأعلى لرؤية الخريطة عند الضغط على الكارت
+        if (window.innerWidth <= 768) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     }
 
     function confirmPickup(e) {
-        e.stopPropagation(); // يمنع تضارب الضغط
+        e.stopPropagation();
         alert("✅ تم تأكيد الاستلام، المندوب في الطريق!");
     }
+
+    // تحديث حجم الخريطة عند تغيير حجم النافذة لضمان عدم حدوث فراغات
+    window.addEventListener('resize', function() {
+        map.invalidateSize();
+    });
 </script>
 
 </body>
